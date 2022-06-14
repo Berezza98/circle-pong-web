@@ -8,7 +8,7 @@ export default class Platform {
     this.ctx = game.ctx;
     this.device = game.device;
     this.inputHandler = game.inputHandler;
-    this.angle = 0;
+    this.angle = Math.PI / 2;
   }
 
   get position() {

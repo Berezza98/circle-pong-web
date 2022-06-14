@@ -1,4 +1,4 @@
-import { getMinMax } from "./helpers.js";
+import { getMinMax, lineCircleCollision } from "./helpers.js";
 import Vector from "./Vector.js";
 
 export default class Ball {
@@ -34,31 +34,6 @@ export default class Ball {
     }
   }
 
-  getClosestPointToThePlatform() {
-    const platformCoordinates = this.game.platform.coorditates;
-
-    const startPlatformToEndPlatformVector = platformCoordinates.end.sub(platformCoordinates.start);
-    const centerBallToStartPlatformVector = platformCoordinates.start.sub(this.position);
-    const centerBallToEndPlatformVector = platformCoordinates.end.sub(this.position);
-
-    // CHECK IF CLOSEST POINT IS START POINT OF PLATFORM
-    if (Vector.dot(startPlatformToEndPlatformVector, centerBallToStartPlatformVector.normalize()) > 0) {
-      return platformCoordinates.start;
-    }
-
-    // CHECK IF CLOSEST POINT IS END POINT OF PLATFORM
-    if (Vector.dot(startPlatformToEndPlatformVector, centerBallToEndPlatformVector.normalize()) < 0) {
-      return platformCoordinates.end;
-    }
-
-    const startPlatformToCenterBallVector = this.position.sub(platformCoordinates.start);
-
-    const projectionLength = Vector.dot(startPlatformToEndPlatformVector.normalize(), startPlatformToCenterBallVector);
-    const projectionPoint = platformCoordinates.start.add(startPlatformToEndPlatformVector.setMag(projectionLength));
-    
-    return projectionPoint;
-  }
-
   platformPenetrationResolution(closestPointToThePlatform) {
     const penetrationVector = this.position.sub(closestPointToThePlatform);
     this.position = this.position.add(penetrationVector.setMag(this.width / 2 - penetrationVector.mag()));
@@ -66,10 +41,10 @@ export default class Ball {
 
   checkPlatformCollision() {
     if (!this.isFlying) return;
+    
+    const { result, projectionPoint } = lineCircleCollision(this.game.platform.coorditates, this);
 
-    const projectionPoint = this.getClosestPointToThePlatform();
-
-    if (projectionPoint.sub(this.position).mag() < this.width / 2) {
+    if (result) {
       this.platformPenetrationResolution(projectionPoint);
 
       const projectionLength = this.game.platform.coorditates.start.sub(projectionPoint).mag();

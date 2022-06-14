@@ -33,7 +33,7 @@ class Game {
     this.device = new WatchDisplay(this.ctx);
     this.platform = new Platform(this);
     this.ball = new Ball2(this);
-    this.brick = new Brick(this, this.device.center.x, this.device.center.y);
+    this.bricks = Brick.generateField(this);
     // new Array(5).fill(null).forEach((el, index) => {
     //   const ball = new Ball(this, index * 50 + 50, index * 50 + 50, 20);
 
@@ -59,7 +59,7 @@ class Game {
     this.device.update();
     this.platform.update();
     this.ball.update();
-    this.brick.update();
+    this.bricks.forEach(obj => obj.update());
 
     // this.balls.forEach(obj => obj.update());
     // this.walls.forEach(obj => obj.update());

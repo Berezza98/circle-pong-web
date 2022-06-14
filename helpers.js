@@ -14,17 +14,29 @@ export function getMinMax(min, max, origMin, origMax, value) {
   return origStep * value + origMin; // 0.2 * 0 + (-10) = -10
 }
 
-export function rectCircleColliding(rect, circle) {
-  let dx = Math.abs(circle.position.x - rect.position.x);
-  let dy = Math.abs(circle.position.y - rect.position.y);
+export function lineCircleCollision(line, circle) {
+  // LINE IS AN OBJECT WITH TWO PROPS: "start" - Vector and "end" - Vector
+  const startLineToEndLineVector = line.end.sub(line.start);
+  const centerBallToStartLineVector = line.start.sub(circle.position);
+  const centerBallToEndLineVector = line.end.sub(circle.position);
 
-  if (dx > circle.radius + rect.width / 2) return false;
-  if (dy > circle.radius + rect.height / 2) return false;
+  // CHECK IF CLOSEST POINT IS START POINT OF LINE
+  if (Vector.dot(startLineToEndLineVector, centerBallToStartLineVector.normalize()) > 0) {
+    return line.start;
+  }
 
-  if (dx <= rect.width) return true;
-  if (dy <= rect.height) return true;
+  // CHECK IF CLOSEST POINT IS END POINT OF LINE
+  if (Vector.dot(startLineToEndLineVector, centerBallToEndLineVector.normalize()) < 0) {
+    return line.end;
+  }
 
-  dx = dx - rect.width;
-  dy = dy - rect.height
-  return dx * dx + dy * dy <= circle.radius * circle.radius;
+  const startPlatformToCenterBallVector = circle.position.sub(line.start);
+
+  const projectionLength = Vector.dot(startLineToEndLineVector.normalize(), startPlatformToCenterBallVector);
+  const projectionPoint = line.start.add(startLineToEndLineVector.setMag(projectionLength));
+  
+  return {
+    result: projectionPoint.sub(circle.position).mag() < circle.radius / 2,
+    projectionPoint
+  }
 }

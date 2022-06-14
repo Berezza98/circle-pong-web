@@ -1,12 +1,17 @@
 import Vector from "./Vector.js";
 
+const HEIGHT = 480;
+const WIDTH = 480;
+
 export default class WatchDisplay {
   constructor(ctx) {
-    this.width = 480;
-    this.height = 480;
+    this.width = WIDTH;
+    this.height = HEIGHT;
     this.center = new Vector(this.width / 2, this.height / 2);
     this.ctx = ctx;
   }
+
+  static center = new Vector(WIDTH / 2, HEIGHT / 2);
 
   update() {
     this.draw();
