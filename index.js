@@ -34,6 +34,12 @@ class Game {
     this.platform = new Platform(this);
     this.ball = new Ball2(this);
     this.bricks = Brick.generateField(this);
+
+    this.bricks.forEach(brick => {
+      brick.on('die', () => {
+        this.bricks.splice(this.bricks.indexOf(brick), 1);
+      });
+    });
     // new Array(5).fill(null).forEach((el, index) => {
     //   const ball = new Ball(this, index * 50 + 50, index * 50 + 50, 20);
 

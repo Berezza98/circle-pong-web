@@ -23,7 +23,7 @@ export function lineCircleCollision(line, circle) {
   // CHECK IF CLOSEST POINT IS START POINT OF LINE
   if (Vector.dot(startLineToEndLineVector, centerBallToStartLineVector.normalize()) > 0) {
     return {
-      result: line.start.sub(circle.position).mag() < circle.radius,
+      result: line.start.sub(circle.position).mag() + 0.01 < circle.radius,
       projectionPoint: line.start
     }
   }
@@ -31,7 +31,7 @@ export function lineCircleCollision(line, circle) {
   // CHECK IF CLOSEST POINT IS END POINT OF LINE
   if (Vector.dot(startLineToEndLineVector, centerBallToEndLineVector.normalize()) < 0) {
     return {
-      result: line.end.sub(circle.position).mag() < circle.radius,
+      result: line.end.sub(circle.position).mag() + 0.01 < circle.radius,
       projectionPoint: line.end
     }
   }

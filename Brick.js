@@ -1,3 +1,4 @@
+import EveneEmitter from "./EventEmitter.js";
 import { lineCircleCollision } from "./helpers.js";
 import Vector from "./Vector.js";
 import WatchDisplay from "./WatchDisplay.js";
@@ -18,8 +19,10 @@ const SIZES_MAP = {
 const BRICK_WIDTH = 50;
 const BRICK_HEIGHT = 15;
 
-export default class Brick {
+export default class Brick extends EveneEmitter {
   constructor(game, x, y) {
+    super();
+
     this.ctx = game.ctx;
     this.game = game;
     this.position = new Vector(x, y);
@@ -37,12 +40,12 @@ export default class Brick {
         start: new Vector(this.position.x - this.width / 2, this.position.y - this.height / 2),
         end: new Vector(this.position.x - this.width / 2, this.position.y + this.height / 2)
       },
-      [SIZES_MAP.BOTTOM]: { // BOTTOM
-        start: new Vector(this.position.x - this.width / 2, this.position.y + this.height / 2),
-        end: new Vector(this.position.x + this.width / 2, this.position.y + this.height / 2)
-      },
       [SIZES_MAP.RIGHT]: { // RIGHT
         start: new Vector(this.position.x + this.width / 2, this.position.y - this.height / 2),
+        end: new Vector(this.position.x + this.width / 2, this.position.y + this.height / 2)
+      },
+      [SIZES_MAP.BOTTOM]: { // BOTTOM
+        start: new Vector(this.position.x - this.width / 2, this.position.y + this.height / 2),
         end: new Vector(this.position.x + this.width / 2, this.position.y + this.height / 2)
       },
     }
@@ -63,30 +66,55 @@ export default class Brick {
 
   hit() {
     this.health -= 1;
+
+    if (!this.isAlive) {
+      this.emit('die');
+    }
   }
 
   checkCollisionWithBall() {
-    if (!this.game.ball.isFlying || this.game.ball.position.sub(this.position).mag() > this.diagonal / 2 + this.game.ball.radius) return;
+    if (!this.game.ball.isFlying || this.game.ball.position.sub(this.position).mag() >= this.diagonal / 2 + this.game.ball.radius) return;
 
-    Object.keys(this.allWalls).forEach((wallName, index) => {
+    const collidedSides = [];
+
+    Object.keys(this.allWalls).forEach((wallName) => {
       const { result, projectionPoint } = lineCircleCollision(this.allWalls[wallName], this.game.ball);
 
-      if (!result) return;
-
-      this.penetrationResolution(projectionPoint);
-      this.hit();
-
-      switch (wallName) {
-        case SIZES_MAP.RIGHT:
-        case SIZES_MAP.LEFT:
-          this.game.ball.velocity.x = -this.game.ball.velocity.x;
-          break;
-        case SIZES_MAP.TOP:
-        case SIZES_MAP.BOTTOM:
-          this.game.ball.velocity.y = -this.game.ball.velocity.y;
-          break;
+      if (result) {
+        collidedSides.push({
+          projectionPoint,
+          wallName
+        });
       }
     });
+
+    if (collidedSides.length === 0) return;
+
+    // console.log(collidedSides[0].projectionPoint.sub(this.game.ball.position).mag());
+    const closestSide = collidedSides.slice(1).reduce((min, current) => {
+      if (current.projectionPoint.sub(this.game.ball.position).mag() < min.projectionPoint.sub(this.game.ball.position).mag()) {
+        return current;
+      }
+
+      return min;
+    }, collidedSides[0]);
+
+    console.log(collidedSides[0].projectionPoint.sub(this.game.ball.position).mag(), collidedSides[1].projectionPoint.sub(this.game.ball.position).mag())
+    console.log('closestSide: ', closestSide);
+
+    this.penetrationResolution(closestSide.projectionPoint);
+    this.hit();
+
+    switch (closestSide.wallName) {
+      case SIZES_MAP.RIGHT:
+      case SIZES_MAP.LEFT:
+        this.game.ball.velocity.x = -this.game.ball.velocity.x;
+        break;
+      case SIZES_MAP.TOP:
+      case SIZES_MAP.BOTTOM:
+        this.game.ball.velocity.y = -this.game.ball.velocity.y;
+        break;
+    }
   }
 
   update() {
@@ -111,7 +139,7 @@ export default class Brick {
       center: WatchDisplay.center,
       verticalMargins: 20,
       horizontalMargins: 50,
-      count: 20,
+      count: 1,
       inRow: 4,
     }, op);
 

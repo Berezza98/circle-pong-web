@@ -8,7 +8,7 @@ export default class Platform {
     this.ctx = game.ctx;
     this.device = game.device;
     this.inputHandler = game.inputHandler;
-    this.angle = Math.PI / 2;
+    this.angle = 0.15707963267949038;
   }
 
   get position() {
@@ -36,6 +36,7 @@ export default class Platform {
   }
 
   update() {
+    // console.log(this.angle);
     if (this.inputHandler.keyboard.leftActive) {
       this.angle += Math.PI / 180 * 3;
     }
