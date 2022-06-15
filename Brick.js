@@ -27,14 +27,8 @@ export default class Brick {
     this.height = BRICK_HEIGHT;
     this.angle = 0;
     this.health = 3;
-  }
 
-  get isAlive() {
-    return this.health > 0;
-  }
-
-  get allWalls() {
-    return {
+    this.allWalls = {
       [SIZES_MAP.TOP]: { // TOP
         start: new Vector(this.position.x - this.width / 2, this.position.y - this.height / 2),
         end: new Vector(this.position.x + this.width / 2, this.position.y - this.height / 2)
@@ -51,12 +45,20 @@ export default class Brick {
         start: new Vector(this.position.x + this.width / 2, this.position.y - this.height / 2),
         end: new Vector(this.position.x + this.width / 2, this.position.y + this.height / 2)
       },
-    };
+    }
+  }
+
+  get isAlive() {
+    return this.health > 0;
+  }
+
+  get diagonal() {
+    return Math.sqrt(Math.pow(this.width, 2) + Math.pow(this.height, 2));
   }
 
   penetrationResolution(closestPointToThePlatform) {
     const penetrationVector = this.game.ball.position.sub(closestPointToThePlatform);
-    this.game.ball.position = this.game.ball.position.add(penetrationVector.setMag(this.game.ball.width / 2 - penetrationVector.mag()));
+    this.game.ball.position = this.game.ball.position.add(penetrationVector.setMag(this.game.ball.radius - penetrationVector.mag()));
   }
 
   hit() {
@@ -64,7 +66,7 @@ export default class Brick {
   }
 
   checkCollisionWithBall() {
-    if (!this.game.ball.isFlying || this.game.ball.position.sub(this.position).mag() > this.width + this.game.ball.radius) return;
+    if (!this.game.ball.isFlying || this.game.ball.position.sub(this.position).mag() > this.diagonal / 2 + this.game.ball.radius) return;
 
     Object.keys(this.allWalls).forEach((wallName, index) => {
       const { result, projectionPoint } = lineCircleCollision(this.allWalls[wallName], this.game.ball);
