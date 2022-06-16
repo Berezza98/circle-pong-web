@@ -28,6 +28,12 @@ export default class Vector {
     ctx.restore();
   }
 
+  static angleBetween(v1, v2) {
+    const magnitudesMultiplication = v1.mag() * v2.mag();
+
+    return Math.acos(Vector.dot(v1, v2) / (magnitudesMultiplication !== 0 ? magnitudesMultiplication : 1));
+  }
+
   set(x, y) {
     this.x = x;
     this.y = y;

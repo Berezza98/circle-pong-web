@@ -46,3 +46,7 @@ export function lineCircleCollision(line, circle) {
     projectionPoint
   }
 }
+
+export function radiansToDegrees(radiansValue) {
+  return radiansValue * (180 / Math.PI);
+}

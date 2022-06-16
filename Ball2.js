@@ -1,4 +1,4 @@
-import { getMinMax, lineCircleCollision } from "./helpers.js";
+import { getMinMax, lineCircleCollision, radiansToDegrees } from "./helpers.js";
 import Vector from "./Vector.js";
 
 export default class Ball {
@@ -47,10 +47,14 @@ export default class Ball {
     if (result) {
       this.platformPenetrationResolution(projectionPoint);
 
-      const projectionLength = this.game.platform.coorditates.start.sub(projectionPoint).mag();
-      const newAngle = getMinMax(0, this.game.platform.width, -30, 30, projectionLength);
-      // // console.log('New ANGLE: ', this.velocity.mult(-1).heading());
-      this.velocity = Vector.fromAngle(this.velocity.mult(-1).heading() + Math.PI / 180 * newAngle).setMag(this.maxSpeed);
+      // WE NEED TO FIND ANGLE BETWEEN PLATFORM AND BALL VELOCITY VECTOR
+      const v1 = this.velocity.mult(-1);
+      const v2 = this.game.platform.coorditates.start.sub(projectionPoint);
+
+      const platformAngle = this.game.platform.coorditates.end.sub(this.game.platform.coorditates.start).heading();
+      const angle = Vector.angleBetween(v1, v2);
+      const newAngle = platformAngle - angle;
+      this.velocity = Vector.fromAngle(newAngle).setMag(this.maxSpeed);
     }
   }
 
