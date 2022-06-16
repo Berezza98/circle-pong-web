@@ -90,31 +90,21 @@ export default class Brick extends EveneEmitter {
 
     if (collidedSides.length === 0) return;
 
-    // console.log(collidedSides[0].projectionPoint.sub(this.game.ball.position).mag());
-    const closestSide = collidedSides.slice(1).reduce((min, current) => {
-      if (current.projectionPoint.sub(this.game.ball.position).mag() < min.projectionPoint.sub(this.game.ball.position).mag()) {
-        return current;
-      }
-
-      return min;
-    }, collidedSides[0]);
-
-    console.log(collidedSides[0].projectionPoint.sub(this.game.ball.position).mag(), collidedSides[1].projectionPoint.sub(this.game.ball.position).mag())
-    console.log('closestSide: ', closestSide);
-
-    this.penetrationResolution(closestSide.projectionPoint);
+    this.penetrationResolution(collidedSides[0].projectionPoint);
     this.hit();
 
-    switch (closestSide.wallName) {
-      case SIZES_MAP.RIGHT:
-      case SIZES_MAP.LEFT:
-        this.game.ball.velocity.x = -this.game.ball.velocity.x;
-        break;
-      case SIZES_MAP.TOP:
-      case SIZES_MAP.BOTTOM:
-        this.game.ball.velocity.y = -this.game.ball.velocity.y;
-        break;
-    }
+    collidedSides.forEach(side => {
+      switch (side.wallName) {
+        case SIZES_MAP.RIGHT:
+        case SIZES_MAP.LEFT:
+          this.game.ball.velocity.x = -this.game.ball.velocity.x;
+          break;
+        case SIZES_MAP.TOP:
+        case SIZES_MAP.BOTTOM:
+          this.game.ball.velocity.y = -this.game.ball.velocity.y;
+          break;
+      }
+    });
   }
 
   update() {
@@ -139,7 +129,7 @@ export default class Brick extends EveneEmitter {
       center: WatchDisplay.center,
       verticalMargins: 20,
       horizontalMargins: 50,
-      count: 1,
+      count: 20,
       inRow: 4,
     }, op);
 
