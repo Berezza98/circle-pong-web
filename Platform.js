@@ -9,7 +9,7 @@ export default class Platform {
     this.ctx = game.ctx;
     this.device = game.device;
     this.inputHandler = game.inputHandler;
-    this.angle = 0;
+    this.angle = Math.PI / 2;
   }
 
   get isOnTopPart() {
@@ -63,12 +63,6 @@ export default class Platform {
     this.ctx.translate(this.position.x, this.position.y);
     this.ctx.rotate(this.visibleAngle);
     this.ctx.fillRect(-this.width / 2, -this.height / 2, this.width, this.height);
-    this.ctx.restore();
-
-    this.ctx.save();
-    this.ctx.translate(WatchDisplay.center.x, WatchDisplay.center.y);
-    const end = Vector.fromAngle(this.visibleAngle).mult(100);
-    Vector.draw(this.ctx, new Vector(0, 0), end, 'red');
     this.ctx.restore();
   }
 }
