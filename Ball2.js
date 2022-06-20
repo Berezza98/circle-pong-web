@@ -8,8 +8,8 @@ export default class Ball {
     this.game = game;
     this.inputHandler = game.inputHandler;
     this.isFlying = false;
-    this.width = 32;
-    this.height = 32;
+    this.width = 20;
+    this.height = 20;
     this.maxSpeed = 4;
 
     this.acceleration = new Vector(0, 0);

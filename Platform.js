@@ -4,8 +4,8 @@ import WatchDisplay from "./WatchDisplay.js";
 
 export default class Platform {
   constructor(game) {
-    this.width = 100;
-    this.height = 20;
+    this.width = 70;
+    this.height = 12;
     this.ctx = game.ctx;
     this.device = game.device;
     this.inputHandler = game.inputHandler;
