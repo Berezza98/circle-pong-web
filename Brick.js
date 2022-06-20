@@ -16,8 +16,8 @@ const SIZES_MAP = {
   BOTTOM: 'BOTTOM',
 };
 
-const BRICK_WIDTH = 30;
-const BRICK_HEIGHT = 10;
+const BRICK_WIDTH = 34;
+const BRICK_HEIGHT = 12;
 
 export default class Brick extends EveneEmitter {
   constructor(game, x, y) {
@@ -144,8 +144,8 @@ export default class Brick extends EveneEmitter {
   static generateField(game, op) {
     const options = Object.assign({}, {
       center: WatchDisplay.center,
-      verticalMargins: 20,
-      horizontalMargins: 20,
+      verticalMargins: 15,
+      horizontalMargins: 15,
       count: 30,
       inRow: 6,
     }, op);
