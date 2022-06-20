@@ -6,6 +6,7 @@ import Wall from "./Wall.js";
 import WatchDisplay from "./WatchDisplay.js";
 import Platform from "./Platform.js";
 import Brick from "./Brick.js";
+import levelGeneration from "./levels/index.js";
 
 const canvas = document.getElementById('canvas');
 
@@ -33,7 +34,7 @@ class Game {
     this.device = new WatchDisplay(this.ctx);
     this.platform = new Platform(this);
     this.ball = new Ball2(this);
-    this.bricks = Brick.generateField(this);
+    this.bricks = levelGeneration(this, 4);
 
     this.bricks.forEach(brick => {
       brick.on('die', () => {
