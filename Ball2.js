@@ -18,7 +18,7 @@ export default class Ball {
   }
 
   get positionOnThePlatform() {
-    return this.game.platform.position.add(this.game.device.center.sub(this.game.platform.position).setMag(this.game.platform.height / 2 + this.height / 2));
+    return this.game.platform.position.add(WatchDisplay.center.sub(this.game.platform.position).setMag(this.game.platform.height / 2 + this.height / 2));
   }
 
   get radius() {

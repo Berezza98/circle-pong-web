@@ -8,7 +8,11 @@ export default (game) => {
     verticalMargins: 15,
     horizontalMargins: 15,
     count: 9,
-    inRow: 3
+    inRow: 3,
+    dynamic: {
+      enabled: true,
+      frameChangeAngle: (Math.PI / 180) * 1
+    }
   });
 
   const allBricks = [

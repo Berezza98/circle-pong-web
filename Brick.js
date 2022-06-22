@@ -1,5 +1,5 @@
 import EveneEmitter from "./EventEmitter.js";
-import { lineCircleCollision } from "./helpers.js";
+import { getCoorditatesAfterRotation, lineCircleCollision } from "./helpers.js";
 import Vector from "./Vector.js";
 import WatchDisplay from "./WatchDisplay.js";
 
@@ -26,12 +26,41 @@ export default class Brick extends EveneEmitter {
     this.ctx = game.ctx;
     this.game = game;
     this.position = new Vector(x, y);
+    this.initPosition = this.position.clone();
     this.width = BRICK_WIDTH;
     this.height = BRICK_HEIGHT;
     this.angle = 0;
     this.health = 3;
+  }
 
-    this.allWalls = {
+  get dynamic() {
+    return this._dynamic;
+  }
+
+  set dynamic(value) {
+    this._dynamic = value;
+  }
+
+  get isAlive() {
+    return this.health > 0;
+  }
+
+  get diagonal() {
+    return Math.sqrt(Math.pow(this.width, 2) + Math.pow(this.height, 2));
+  }
+
+  get frameChangeAngle() {
+    return this._frameChangeAngle;
+  }
+
+  set frameChangeAngle(value) {
+    if (!value) return;
+
+    this._frameChangeAngle = value;
+  }
+
+  getAllWalls() {
+    return {
       [SIZES_MAP.TOP]: { // TOP
         start: new Vector(this.position.x - this.width / 2, this.position.y - this.height / 2),
         end: new Vector(this.position.x + this.width / 2, this.position.y - this.height / 2)
@@ -48,15 +77,7 @@ export default class Brick extends EveneEmitter {
         start: new Vector(this.position.x - this.width / 2, this.position.y + this.height / 2),
         end: new Vector(this.position.x + this.width / 2, this.position.y + this.height / 2)
       },
-    }
-  }
-
-  get isAlive() {
-    return this.health > 0;
-  }
-
-  get diagonal() {
-    return Math.sqrt(Math.pow(this.width, 2) + Math.pow(this.height, 2));
+    }; 
   }
 
   penetrationResolution(closestPointToThePlatform) {
@@ -94,8 +115,10 @@ export default class Brick extends EveneEmitter {
 
     const collidedSides = [];
 
-    Object.keys(this.allWalls).forEach((wallName) => {
-      const { result, projectionPoint } = lineCircleCollision(this.allWalls[wallName], this.game.ball);
+    const allWalls = this.getAllWalls();
+
+    Object.keys(allWalls).forEach((wallName) => {
+      const { result, projectionPoint } = lineCircleCollision(allWalls[wallName], this.game.ball);
 
       if (result && this.canUseCollision(wallName)) {
         collidedSides.push({
@@ -124,10 +147,24 @@ export default class Brick extends EveneEmitter {
     });
   }
 
+  changePosition() {
+    if (!this.dynamic) return;
+
+    this.angle += this.frameChangeAngle;
+
+    this.position = getCoorditatesAfterRotation({
+      position: this.initPosition,
+      angle: this.angle,
+      origin: WatchDisplay.center
+    });
+  }
+
   update() {
     if (!this.isAlive) return;
 
     this.checkCollisionWithBall();
+    
+    this.changePosition();
     
     this.draw();
   }
@@ -136,7 +173,6 @@ export default class Brick extends EveneEmitter {
     this.ctx.save();
     this.ctx.fillStyle = HEALTH_COLORS[this.health];
     this.ctx.translate(this.position.x, this.position.y);
-    this.ctx.rotate(this.angle);
     this.ctx.fillRect(-this.width / 2, -this.height / 2, this.width, this.height);
     this.ctx.restore();
   }
@@ -148,6 +184,9 @@ export default class Brick extends EveneEmitter {
       horizontalMargins: 15,
       count: 30,
       inRow: 6,
+      dynamic: {
+        enabled: false
+      }
     }, op);
 
     const rowCount = Math.ceil(options.count / options.inRow);
@@ -163,7 +202,14 @@ export default class Brick extends EveneEmitter {
 
       const positionX = initialPosition.x + (column * (BRICK_WIDTH + options.horizontalMargins));
       const positionY = initialPosition.y + (row * (BRICK_HEIGHT + options.verticalMargins));
-      return new Brick(game, positionX, positionY)
+      const brick = new Brick(game, positionX, positionY);
+
+      if (options?.dynamic?.enabled) {
+        brick.dynamic = true;
+        brick.frameChangeAngle = options.dynamic.frameChangeAngle;
+      }
+
+      return brick;
     });
 
     return bricks;
