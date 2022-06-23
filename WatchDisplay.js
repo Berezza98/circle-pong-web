@@ -20,8 +20,8 @@ export default class WatchDisplay {
 
   draw() {
     this.ctx.save();
-    this.ctx.strokeStyle = 'blue';
-    this.ctx.lineWidth = 10;
+    // this.ctx.strokeStyle = 'blue';
+    // this.ctx.lineWidth = 10;
     this.ctx.beginPath();
     this.ctx.arc(this.center.x, this.center.y, this.width / 2, 0, Math.PI * 2);
     this.ctx.stroke();

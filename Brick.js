@@ -6,9 +6,9 @@ import WatchDisplay from "./WatchDisplay.js";
 const DEATHLESS_COLOR = 'DEATHLESS_COLOR';
 
 const HEALTH_COLORS = {
-  1: 'rgb(255, 0, 0)',
-  2: 'rgb(0, 0, 255)',
-  3: 'rgb(0, 255, 0)',
+  1: 'rgb(214, 51, 42)',
+  2: 'rgb(214, 145, 42)',
+  3: 'rgb(55, 183, 38)',
   [DEATHLESS_COLOR]: 'rgb(170, 169, 173)'
 };
 

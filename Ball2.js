@@ -32,6 +32,7 @@ export default class Ball {
       this.isFlying = false;
       this.velocity.set(0, 0);
       this.position = this.positionOnThePlatform;
+      this.game.platform.die();
     }
   }
 

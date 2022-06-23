@@ -7,11 +7,13 @@ import WatchDisplay from "./WatchDisplay.js";
 import Platform from "./Platform.js";
 import Brick from "./Brick.js";
 import levelGeneration from "./levels/index.js";
+import Background from "./Background.js";
 
 const canvas = document.getElementById('canvas');
 
 class Game {
-  constructor() {
+  constructor(level) {
+    this.level = level;
     this.balls = [];
     this.walls = [];
     this.ctx = canvas.getContext('2d');
@@ -31,45 +33,27 @@ class Game {
   }
 
   init() {
+    this.background = new Background(this.ctx);
     this.device = new WatchDisplay(this.ctx);
     this.platform = new Platform(this);
     this.ball = new Ball2(this);
-    this.bricks = levelGeneration(this, 'dynamic');
+    this.bricks = levelGeneration(this, this.level);
 
     this.bricks.forEach(brick => {
       brick.on('die', () => {
         this.bricks.splice(this.bricks.indexOf(brick), 1);
       });
     });
-    // new Array(5).fill(null).forEach((el, index) => {
-    //   const ball = new Ball(this, index * 50 + 50, index * 50 + 50, 20);
-
-    //   if (index === 0) ball.controllable = true;
-
-    //   this.balls.push(ball);
-    // });
-
-    // const walls = [
-    //   new Wall(this, new Vector(300, 150), new Vector(400, 400)),
-    //   new Wall(this, new Vector(0, 0), new Vector(canvas.width, 0)),
-    //   new Wall(this, new Vector(0, 0), new Vector(0, canvas.height)),
-    //   new Wall(this, new Vector(0, canvas.height), new Vector(canvas.width, canvas.height)),
-    //   new Wall(this, new Vector(canvas.width, 0), new Vector(canvas.width, canvas.height)),
-    // ];
-
-    // walls.forEach(el => this.walls.push(el));
   }
 
   draw() {
     this.ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+    this.background.update();
     this.device.update();
     this.platform.update();
     this.ball.update();
     this.bricks.forEach(obj => obj.update());
-
-    // this.balls.forEach(obj => obj.update());
-    // this.walls.forEach(obj => obj.update());
   }
 
   render() {
@@ -79,4 +63,4 @@ class Game {
   }
 }
 
-new Game();
+new Game(1);
