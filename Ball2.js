@@ -90,7 +90,7 @@ export default class Ball {
 
   draw() {
     this.ctx.save();
-    this.ctx.fillStyle = 'red';
+    this.ctx.fillStyle = 'rgb(21, 220, 245)';
     this.ctx.beginPath();
     this.ctx.arc(this.position.x, this.position.y, this.width / 2, 0, Math.PI * 2);
     this.ctx.fill();

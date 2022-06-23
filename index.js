@@ -63,4 +63,4 @@ class Game {
   }
 }
 
-new Game(1);
+new Game(5);

@@ -6,7 +6,7 @@ import WatchDisplay from "./WatchDisplay.js";
 const COLORS = {
   1: 'red',
   2: 'yellow',
-  3: 'green'
+  3: 'rgb(234, 202, 23)'
 }
 export default class Platform extends EveneEmitter {
   constructor(game) {
