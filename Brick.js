@@ -3,10 +3,13 @@ import { getCoorditatesAfterRotation, lineCircleCollision } from "./helpers.js";
 import Vector from "./Vector.js";
 import WatchDisplay from "./WatchDisplay.js";
 
+const DEATHLESS_COLOR = 'DEATHLESS_COLOR';
+
 const HEALTH_COLORS = {
   1: 'rgb(255, 0, 0)',
   2: 'rgb(0, 0, 255)',
-  3: 'rgb(0, 255, 0)'
+  3: 'rgb(0, 255, 0)',
+  [DEATHLESS_COLOR]: 'rgb(170, 169, 173)'
 };
 
 const SIZES_MAP = {
@@ -20,8 +23,15 @@ const BRICK_WIDTH = 34;
 const BRICK_HEIGHT = 12;
 
 export default class Brick extends EveneEmitter {
-  constructor(game, x, y) {
+  constructor(game, x, y, options) {
     super();
+
+    const defaultOptions = {
+      health: 3,
+      deathless: false
+    };
+
+    this.options = Object.assign({}, defaultOptions, options);
 
     this.ctx = game.ctx;
     this.game = game;
@@ -30,7 +40,8 @@ export default class Brick extends EveneEmitter {
     this.width = BRICK_WIDTH;
     this.height = BRICK_HEIGHT;
     this.angle = 0;
-    this.health = 3;
+    this.deathless = this.options.deathless;
+    this.health = this.options.health;
   }
 
   get dynamic() {
@@ -42,6 +53,8 @@ export default class Brick extends EveneEmitter {
   }
 
   get isAlive() {
+    if (this.deathless) return true;
+
     return this.health > 0;
   }
 
@@ -171,7 +184,7 @@ export default class Brick extends EveneEmitter {
 
   draw() {
     this.ctx.save();
-    this.ctx.fillStyle = HEALTH_COLORS[this.health];
+    this.ctx.fillStyle = HEALTH_COLORS[this.deathless ? DEATHLESS_COLOR : this.health];
     this.ctx.translate(this.position.x, this.position.y);
     this.ctx.fillRect(-this.width / 2, -this.height / 2, this.width, this.height);
     this.ctx.restore();
@@ -186,6 +199,10 @@ export default class Brick extends EveneEmitter {
       inRow: 6,
       dynamic: {
         enabled: false
+      },
+      brickOptions: {
+        health: 3,
+        deathless: false
       }
     }, op);
 
@@ -202,7 +219,7 @@ export default class Brick extends EveneEmitter {
 
       const positionX = initialPosition.x + (column * (BRICK_WIDTH + options.horizontalMargins));
       const positionY = initialPosition.y + (row * (BRICK_HEIGHT + options.verticalMargins));
-      const brick = new Brick(game, positionX, positionY);
+      const brick = new Brick(game, positionX, positionY, options.brickOptions);
 
       if (options?.dynamic?.enabled) {
         brick.dynamic = true;
