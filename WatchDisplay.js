@@ -12,6 +12,7 @@ export default class WatchDisplay {
   }
 
   static center = new Vector(WIDTH / 2, HEIGHT / 2);
+  static width = WIDTH;
 
   update() {
     this.draw();

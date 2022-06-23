@@ -1,15 +1,28 @@
+import EveneEmitter from "./EventEmitter.js";
 import { getCoorditatesAfterRotation } from "./helpers.js";
 import Vector from "./Vector.js";
 import WatchDisplay from "./WatchDisplay.js";
 
-export default class Platform {
+const COLORS = {
+  1: 'red',
+  2: 'yellow',
+  3: 'green'
+}
+export default class Platform extends EveneEmitter {
   constructor(game) {
+    super();
+
     this.width = 70;
     this.height = 12;
     this.ctx = game.ctx;
     this.device = game.device;
     this.inputHandler = game.inputHandler;
     this.angle = Math.PI / 2;
+    this.lives = 3;
+  }
+
+  get fillStyle() {
+    return COLORS[this.lives];
   }
 
   get isOnTopPart() {
@@ -19,6 +32,10 @@ export default class Platform {
 
   get position() {
     return Vector.fromAngle(this.angle).mult(this.device.width / 2 - this.height).add(this.device.center);
+  }
+
+  get isDied() {
+    return this.lives <= 0;
   }
 
   get coorditates() {
@@ -43,6 +60,12 @@ export default class Platform {
     return this.angle + Math.PI / 2;
   }
 
+  die() {
+    this.lives -= 1;
+
+    if (this.isDied) return this.emit(DIED_EVENT);
+  }
+
   update() {
     if (this.inputHandler.keyboard.leftActive) {
       this.angle += Math.PI / 180 * 3;
@@ -57,7 +80,7 @@ export default class Platform {
 
   draw() {
     this.ctx.save();
-    this.ctx.fillStyle = 'yellow';
+    this.ctx.fillStyle = this.fillStyle;
     this.ctx.translate(this.position.x, this.position.y);
     this.ctx.rotate(this.visibleAngle);
     this.ctx.fillRect(-this.width / 2, -this.height / 2, this.width, this.height);

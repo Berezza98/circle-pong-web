@@ -7,11 +7,12 @@ export function getCoorditatesAfterRotation({ position, angle, origin }) {
   );
 }
 
-export function getMinMax(min, max, origMin, origMax, value) {
-  const stepsCount = max - min; // 100 - 0 = 100
-  const origStep = (origMax - origMin) / stepsCount; // 10 - (-10) / 100 = 20 / 100 = 0.2
+export function getMinMax(min, max, origMin, origMax, value) { // -1 1 -100 100, -1
+  const origDist = Math.abs(origMax - origMin); // 100 - (-100) = 200
+  const dist = Math.abs(max - min); // 1 - (-1) = 2
+  const coef = origDist / dist; // 200 / 2 = 100
 
-  return origStep * value + origMin; // 0.2 * 0 + (-10) = -10
+  return origMin + (coef + value * coef); // -100 + (100 + (-100))
 }
 
 export function lineCircleCollision(line, circle) {

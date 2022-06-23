@@ -34,7 +34,7 @@ class Game {
     this.device = new WatchDisplay(this.ctx);
     this.platform = new Platform(this);
     this.ball = new Ball2(this);
-    this.bricks = levelGeneration(this, 5);
+    this.bricks = levelGeneration(this, 'dynamic');
 
     this.bricks.forEach(brick => {
       brick.on('die', () => {

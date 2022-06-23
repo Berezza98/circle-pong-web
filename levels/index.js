@@ -3,6 +3,7 @@ import level2 from './2.js';
 import level3 from './3.js';
 import level4 from './4.js';
 import level5 from './5.js';
+import dynamic from './10-dynamic.js';
 
 const levels = {
   1: level1,
@@ -10,6 +11,7 @@ const levels = {
   3: level3,
   4: level4,
   5: level5,
+  'dynamic': dynamic,
 }
 
 export default function levelGeneration(game, levelNumber) {
