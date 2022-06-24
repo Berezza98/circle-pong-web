@@ -51,3 +51,17 @@ export function lineCircleCollision(line, circle) {
 export function radiansToDegrees(radiansValue) {
   return radiansValue * (180 / Math.PI);
 }
+
+export function normalizeAngle(angle) {
+  const newAngle = (angle % (Math.PI * 2));
+
+  if (newAngle > 0) return newAngle;
+
+  return newAngle + Math.PI * 2;
+}
+
+export function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}

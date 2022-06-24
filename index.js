@@ -1,21 +1,17 @@
 import Ball from "./Ball.js";
-import Ball2 from "./Ball2.js";
 import InputHandler from "./InputHandler.js";
 import Vector from "./Vector.js";
-import Wall from "./Wall.js";
 import WatchDisplay from "./WatchDisplay.js";
-import Platform from "./Platform.js";
-import Brick from "./Brick.js";
-import levelGeneration from "./levels/index.js";
 import Background from "./Background.js";
+import Walls from "./Walls.js";
 
 const canvas = document.getElementById('canvas');
 
 class Game {
-  constructor(level) {
-    this.level = level;
+  constructor() {
     this.balls = [];
     this.walls = [];
+    this.score = 0;
     this.ctx = canvas.getContext('2d');
     this.inputHandler = new InputHandler();
 
@@ -35,15 +31,13 @@ class Game {
   init() {
     this.background = new Background(this.ctx);
     this.device = new WatchDisplay(this.ctx);
-    this.platform = new Platform(this);
-    this.ball = new Ball2(this);
-    this.bricks = levelGeneration(this, this.level);
+    this.ball = new Ball(this);
+    this.walls = new Walls(this);
+  }
 
-    this.bricks.forEach(brick => {
-      brick.on('die', () => {
-        this.bricks.splice(this.bricks.indexOf(brick), 1);
-      });
-    });
+  increaseScore() {
+    this.score += 1;
+    console.log('SCORE: ', this.score);
   }
 
   draw() {
@@ -51,15 +45,20 @@ class Game {
 
     this.background.update();
     this.device.update();
-    this.platform.update();
+    this.walls.update();
     this.ball.update();
-    this.bricks.forEach(obj => obj.update());
   }
 
   render() {
     this.draw();
 
-    requestAnimationFrame(this.render.bind(this));
+    if (this.isStopped) return;
+
+    this.timer = requestAnimationFrame(this.render.bind(this));
+  }
+
+  stop() {
+    this.isStopped = true;
   }
 }
 

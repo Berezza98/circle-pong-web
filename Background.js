@@ -15,7 +15,7 @@ export default class Background {
       this.isLoaded = true;
     });
 
-    this.image.src = 'images/5.png';
+    this.image.src = 'images/1.png';
   }
 
   update() {
